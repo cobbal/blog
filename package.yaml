@@ -1,19 +1,19 @@
-name:                slick-template
+name:                cobbal-blog
 version:             0.1.0.0
-github:              "Me/my-site"
+github:              "cobbal/cobbal-blog"
 license:             BSD3
-author:              "Me"
-maintainer:          "example@example.com"
-copyright:           "20XX Me"
+author:              "Andrew Cobb"
+maintainer:          "andrew.cobb@gmail.com"
+copyright:           "2025 Andrew Cobb"
 
 extra-source-files:
 - README.md
 - ChangeLog.md
 
-synopsis:            My site built with slick!
+synopsis:            cobbal's blog
 category:            Slick-Site
 
-description: My slick Site
+description: cobbal's blog
 
 executables:
   build-site:

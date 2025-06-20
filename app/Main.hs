@@ -7,6 +7,7 @@ module Main where
 
 import Control.Lens ((?~), at)
 import Control.Monad (void)
+import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson (FromJSON, ToJSON, Value (Object, String), toJSON)
 import Data.Aeson.KeyMap (union)
 import Data.Aeson.Lens (_Object)
@@ -14,26 +15,28 @@ import qualified Data.Text as T
 import Data.Time
   ( UTCTime, defaultTimeLocale, formatTime, getCurrentTime
   , iso8601DateFormat, parseTimeOrError)
+import Data.Time.Format.ISO8601
 import Development.Shake
   ( Action, Verbosity(Verbose), copyFileChanged, forP, getDirectoryFiles
   , liftIO, readFile', shakeLintInside, shakeOptions, shakeVerbosity
   , writeFile')
 import Development.Shake.Classes (Binary)
-import Development.Shake.FilePath ((</>), (-<.>), dropDirectory1)
+import Development.Shake.FilePath ((</>), (-<.>), dropDirectory1, normaliseEx, toStandard)
 import Development.Shake.Forward (cacheAction, shakeArgsForward)
 import GHC.Generics (Generic)
 import Slick (compileTemplate', convert, markdownToHTML, substitute)
+import System.IO (withBinaryFile, IOMode(WriteMode), hPutStr)
 
 
 ---Config-----------------------------------------------------------------------
 
 siteMeta :: SiteMeta
 siteMeta =
-    SiteMeta { siteAuthor = "Me"
-             , baseUrl = "https://example.com"
-             , siteTitle = "My Slick Site"
-             , twitterHandle = Just "myslickhandle"
-             , githubUser = Just "myslickgithubuser"
+    SiteMeta { siteAuthor = "Andrew Cobb"
+             , baseUrl = "https://blog.cobbal.com"
+             , siteTitle = "blog.cobbal.com"
+             , blueskyHandle = Just "cobbal.bsky.social"
+             , githubUser = Just "cobbal"
              }
 
 outputFolder :: FilePath
@@ -51,7 +54,7 @@ data SiteMeta =
     SiteMeta { siteAuthor    :: String
              , baseUrl       :: String -- e.g. https://example.ca
              , siteTitle     :: String
-             , twitterHandle :: Maybe String -- Without @
+             , blueskyHandle :: Maybe String -- Without @
              , githubUser    :: Maybe String
              }
     deriving (Generic, Eq, Ord, Show, ToJSON)
@@ -91,7 +94,7 @@ buildIndex posts' = do
   indexT <- compileTemplate' "site/templates/index.html"
   let indexInfo = IndexInfo {posts = posts'}
       indexHTML = T.unpack $ substitute indexT (withSiteMeta $ toJSON indexInfo)
-  writeFile' (outputFolder </> "index.html") indexHTML
+  writeBinaryFile' (outputFolder </> "index.html") indexHTML
 
 -- | Find and build all posts
 buildPosts :: Action [Post]
@@ -107,12 +110,12 @@ buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
   postContent <- readFile' srcPath
   -- load post content and metadata as JSON blob
   postData <- markdownToHTML . T.pack $ postContent
-  let postUrl = T.pack . dropDirectory1 $ srcPath -<.> "html"
+  let postUrl = T.pack . toStandard . normaliseEx . ("/" ++) . dropDirectory1 $ srcPath -<.> "html"
       withPostUrl = _Object . at "url" ?~ String postUrl
   -- Add additional metadata we've been able to compute
   let fullPostData = withSiteMeta . withPostUrl $ postData
   template <- compileTemplate' "site/templates/post.html"
-  writeFile' (outputFolder </> T.unpack postUrl) . T.unpack $ substitute template fullPostData
+  writeBinaryFile' (outputFolder </> T.unpack postUrl) . T.unpack $ substitute template fullPostData
   convert fullPostData
 
 -- | Copy all static files from the listed folders to their destination
@@ -132,7 +135,16 @@ rfc3339 :: Maybe String
 rfc3339 = Just "%H:%M:%SZ"
 
 toIsoDate :: UTCTime -> String
-toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
+-- toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
+toIsoDate = iso8601Show
+
+writeBinaryFile :: FilePath -> String -> IO ()
+writeBinaryFile f txt = withBinaryFile f WriteMode (\ hdl -> hPutStr hdl txt)
+
+writeBinaryFile' :: MonadIO m => FilePath -> String -> m ()
+writeBinaryFile' name x = liftIO $ do
+    writeFile' name ""
+    writeBinaryFile name x
 
 buildFeed :: [Post] -> Action ()
 buildFeed posts' = do
@@ -147,7 +159,7 @@ buildFeed posts' = do
           , atomUrl = "/atom.xml"
           }
   atomTempl <- compileTemplate' "site/templates/atom.xml"
-  writeFile' (outputFolder </> "atom.xml") . T.unpack $ substitute atomTempl (toJSON atomData)
+  writeBinaryFile' (outputFolder </> "atom.xml") . T.unpack $ substitute atomTempl (toJSON atomData)
     where
       mkAtomPost :: Post -> Post
       mkAtomPost p = p { date = formatDate $ date p }
