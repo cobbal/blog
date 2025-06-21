@@ -1,46 +1,61 @@
-{-# LANGUAGE DeriveGeneric         #-}
-{-# LANGUAGE DeriveAnyClass        #-}
-{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
 {-# HLINT ignore "Use section" #-}
 {-# HLINT ignore "Avoid lambda using `infix`" #-}
 
 module Main where
 
-import Control.Lens ((?~), at)
+import Control.Lens (at, (?~))
 import Control.Monad (void)
 import Control.Monad.IO.Class (MonadIO)
 import Data.Aeson (FromJSON, ToJSON, Value (Object, String), toJSON)
 import Data.Aeson.KeyMap (union)
 import Data.Aeson.Lens (_Object)
 import qualified Data.Text as T
-import Data.Time
-  ( UTCTime, defaultTimeLocale, formatTime, getCurrentTime
-  , iso8601DateFormat, parseTimeOrError)
-import Development.Shake
-  ( Action, Verbosity(Verbose), copyFileChanged, forP, getDirectoryFiles
-  , liftIO, readFile', shakeLintInside, shakeOptions, shakeVerbosity
-  , writeFile')
+import Data.Time (
+  UTCTime,
+  defaultTimeLocale,
+  formatTime,
+  getCurrentTime,
+  iso8601DateFormat,
+  parseTimeOrError,
+ )
+import Development.Shake (
+  Action,
+  Verbosity (Verbose),
+  copyFileChanged,
+  forP,
+  getDirectoryFiles,
+  liftIO,
+  readFile',
+  shakeLintInside,
+  shakeOptions,
+  shakeVerbosity,
+  writeFile',
+ )
 import Development.Shake.Classes (Binary)
-import Development.Shake.FilePath ((</>), (-<.>), dropDirectory1, normaliseEx, toStandard)
+import Development.Shake.FilePath (dropDirectory1, normaliseEx, toStandard, (-<.>), (</>))
 import Development.Shake.Forward (cacheAction, shakeArgsForward)
 import GHC.Generics (Generic)
 import Slick (compileTemplate', convert, markdownToHTML, substitute)
-import System.IO (withBinaryFile, IOMode(WriteMode), hPutStr)
-
+import System.IO (IOMode (WriteMode), hPutStr, withBinaryFile)
 
 ---Config-----------------------------------------------------------------------
 
 siteMeta :: SiteMeta
 siteMeta =
-    SiteMeta { siteAuthor = "Andrew Cobb"
-             , baseUrl = "https://blog.cobbal.com"
-             , siteTitle = "blog.cobbal.com"
-             , blueskyHandle = Just "cobbal.bsky.social"
-             , mastodonHandle = Just "mstdn.social/@cobbal"
-             , githubUser = Just "cobbal"
-             }
+  SiteMeta
+    { siteAuthor = "Andrew Cobb"
+    , baseUrl = "https://blog.cobbal.com"
+    , siteTitle = "blog.cobbal.com"
+    , blueskyHandle = Just "cobbal.bsky.social"
+    , mastodonHandle = Just "mstdn.social/@cobbal"
+    , githubUser = Just "cobbal"
+    }
 
 outputFolder :: FilePath
 outputFolder = "docs/"
@@ -55,44 +70,50 @@ withSiteMeta (Object obj) = Object $ union obj siteMetaObj
     unObject j = error $ "expected Object, got " ++ show j
 withSiteMeta _ = error "only add site meta to objects"
 
-data SiteMeta =
-    SiteMeta { siteAuthor    :: String
-             , baseUrl       :: String -- e.g. https://example.ca
-             , siteTitle     :: String
-             , blueskyHandle :: Maybe String -- Without @
-             , mastodonHandle :: Maybe String -- server.com/@handle
-             , githubUser    :: Maybe String
-             }
-    deriving (Generic, Eq, Ord, Show, ToJSON)
+data SiteMeta
+  = SiteMeta
+  { siteAuthor :: String
+  , baseUrl :: String -- e.g. https://example.ca
+  , siteTitle :: String
+  , blueskyHandle :: Maybe String -- Without @
+  , mastodonHandle :: Maybe String -- server.com/@handle
+  , githubUser :: Maybe String
+  }
+  deriving (Generic, Eq, Ord, Show, ToJSON)
 
 -- | Data for the index page
-data IndexInfo =
-  IndexInfo
-    { posts :: [Post]
-    } deriving (Generic, Show, FromJSON, ToJSON)
+data IndexInfo
+  = IndexInfo
+  { posts :: [Post]
+  }
+  deriving (Generic, Show, FromJSON, ToJSON)
 
 type Tag = String
 
 -- | Data for a blog post
-data Post =
-    Post { title       :: String
-         , author      :: String
-         , content     :: String
-         , url         :: String
-         , date        :: String
-         , tags        :: [Tag]
-         , description :: String
-         , image       :: Maybe String
-         }
-    deriving (Generic, Eq, Ord, Show, FromJSON, ToJSON, Binary)
+data Post
+  = Post
+  { title :: String
+  , author :: String
+  , content :: String
+  , url :: String
+  , date :: String
+  , tags :: [Tag]
+  , description :: String
+  , image :: Maybe String
+  }
+  deriving (Generic, Eq, Ord, Show, FromJSON, ToJSON, Binary)
 
-data AtomData =
-  AtomData { title        :: String
-           , domain       :: String
-           , author       :: String
-           , posts        :: [Post]
-           , currentTime  :: String
-           , atomUrl      :: String } deriving (Generic, ToJSON, Eq, Ord, Show)
+data AtomData
+  = AtomData
+  { title :: String
+  , domain :: String
+  , author :: String
+  , posts :: [Post]
+  , currentTime :: String
+  , atomUrl :: String
+  }
+  deriving (Generic, ToJSON, Eq, Ord, Show)
 
 -- | given a list of posts this will build a table of contents
 buildIndex :: [Post] -> Action ()
@@ -108,8 +129,9 @@ buildPosts = do
   pPaths <- getDirectoryFiles "." ["site/posts//*.md"]
   forP pPaths buildPost
 
--- | Load a post, process metadata, write it to output, then return the post object
--- Detects changes to either post content or template
+{- | Load a post, process metadata, write it to output, then return the post object
+Detects changes to either post content or template
+-}
 buildPost :: FilePath -> Action Post
 buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
   liftIO . putStrLn $ "Rebuilding post: " <> srcPath
@@ -127,9 +149,9 @@ buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
 -- | Copy all static files from the listed folders to their destination
 copyStaticFiles :: Action ()
 copyStaticFiles = do
-    filepaths <- getDirectoryFiles "./site/" ["images//*", "css//*", "js//*"]
-    void $ forP filepaths $ \filepath ->
-        copyFileChanged ("site" </> filepath) (outputFolder </> filepath)
+  filepaths <- getDirectoryFiles "./site/" ["images//*", "css//*", "js//*"]
+  void $ forP filepaths $ \filepath ->
+    copyFileChanged ("site" </> filepath) (outputFolder </> filepath)
 
 formatDate :: String -> String
 formatDate humanDate = toIsoDate parsedTime
@@ -142,15 +164,16 @@ rfc3339 = Just "%H:%M:%SZ"
 
 toIsoDate :: UTCTime -> String
 toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
---toIsoDate = iso8601Show
+
+-- toIsoDate = iso8601Show
 
 writeBinaryFile :: FilePath -> String -> IO ()
 writeBinaryFile f txt = withBinaryFile f WriteMode (\hdl -> hPutStr hdl txt)
 
-writeBinaryFile' :: MonadIO m => FilePath -> String -> m ()
+writeBinaryFile' :: (MonadIO m) => FilePath -> String -> m ()
 writeBinaryFile' name x = liftIO $ do
-    writeFile' name ""
-    writeBinaryFile name x
+  writeFile' name ""
+  writeBinaryFile name x
 
 buildFeed :: [Post] -> Action ()
 buildFeed posts' = do
@@ -166,12 +189,13 @@ buildFeed posts' = do
           }
   atomTempl <- compileTemplate' "site/templates/atom.xml"
   writeBinaryFile' (outputFolder </> "atom.xml") . T.unpack $ substitute atomTempl (toJSON atomData)
-    where
-      mkAtomPost :: Post -> Post
-      mkAtomPost p = p { date = formatDate $ date p }
+  where
+    mkAtomPost :: Post -> Post
+    mkAtomPost p = p {date = formatDate $ date p}
 
--- | Specific build rules for the Shake system
---   defines workflow to build the website
+{- | Specific build rules for the Shake system
+  defines workflow to build the website
+-}
 buildRules :: Action ()
 buildRules = do
   allPosts <- buildPosts
@@ -181,5 +205,5 @@ buildRules = do
 
 main :: IO ()
 main = do
-  let shOpts = shakeOptions { shakeVerbosity = Verbose, shakeLintInside = ["\\"]}
+  let shOpts = shakeOptions {shakeVerbosity = Verbose, shakeLintInside = ["\\"]}
   shakeArgsForward shOpts buildRules
