@@ -2,6 +2,9 @@
 {-# LANGUAGE DeriveAnyClass        #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE DuplicateRecordFields #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use section" #-}
+{-# HLINT ignore "Avoid lambda using `infix`" #-}
 
 module Main where
 
@@ -15,7 +18,6 @@ import qualified Data.Text as T
 import Data.Time
   ( UTCTime, defaultTimeLocale, formatTime, getCurrentTime
   , iso8601DateFormat, parseTimeOrError)
-import Data.Time.Format.ISO8601
 import Development.Shake
   ( Action, Verbosity(Verbose), copyFileChanged, forP, getDirectoryFiles
   , liftIO, readFile', shakeLintInside, shakeOptions, shakeVerbosity
@@ -36,18 +38,21 @@ siteMeta =
              , baseUrl = "https://blog.cobbal.com"
              , siteTitle = "blog.cobbal.com"
              , blueskyHandle = Just "cobbal.bsky.social"
+             , mastodonHandle = Just "mstdn.social/@cobbal"
              , githubUser = Just "cobbal"
              }
 
 outputFolder :: FilePath
 outputFolder = "docs/"
 
---Data models-------------------------------------------------------------------
+---Data models------------------------------------------------------------------
 
 withSiteMeta :: Value -> Value
 withSiteMeta (Object obj) = Object $ union obj siteMetaObj
   where
-    Object siteMetaObj = toJSON siteMeta
+    siteMetaObj = unObject (toJSON siteMeta)
+    unObject (Object o) = o
+    unObject j = error $ "expected Object, got " ++ show j
 withSiteMeta _ = error "only add site meta to objects"
 
 data SiteMeta =
@@ -55,6 +60,7 @@ data SiteMeta =
              , baseUrl       :: String -- e.g. https://example.ca
              , siteTitle     :: String
              , blueskyHandle :: Maybe String -- Without @
+             , mastodonHandle :: Maybe String -- server.com/@handle
              , githubUser    :: Maybe String
              }
     deriving (Generic, Eq, Ord, Show, ToJSON)
@@ -110,8 +116,8 @@ buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
   postContent <- readFile' srcPath
   -- load post content and metadata as JSON blob
   postData <- markdownToHTML . T.pack $ postContent
-  let postUrl = T.pack . toStandard . normaliseEx . ("/" ++) . dropDirectory1 $ srcPath -<.> "html"
-      withPostUrl = _Object . at "url" ?~ String postUrl
+  let postUrl = T.pack . dropDirectory1 $ srcPath -<.> "html"
+      withPostUrl = _Object . at "url" ?~ String (T.pack $ toStandard $ normaliseEx $ "/" ++ T.unpack postUrl)
   -- Add additional metadata we've been able to compute
   let fullPostData = withSiteMeta . withPostUrl $ postData
   template <- compileTemplate' "site/templates/post.html"
@@ -135,11 +141,11 @@ rfc3339 :: Maybe String
 rfc3339 = Just "%H:%M:%SZ"
 
 toIsoDate :: UTCTime -> String
--- toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
-toIsoDate = iso8601Show
+toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
+--toIsoDate = iso8601Show
 
 writeBinaryFile :: FilePath -> String -> IO ()
-writeBinaryFile f txt = withBinaryFile f WriteMode (\ hdl -> hPutStr hdl txt)
+writeBinaryFile f txt = withBinaryFile f WriteMode (\hdl -> hPutStr hdl txt)
 
 writeBinaryFile' :: MonadIO m => FilePath -> String -> m ()
 writeBinaryFile' name x = liftIO $ do

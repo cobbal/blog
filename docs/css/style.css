@@ -21,24 +21,21 @@ html {
 /* Variables */
 html {
     font-family: georgia, serif;
-    color: #333;
-    background: #FFFFFC;
-    background: -webkit-linear-gradient(top, #EEE 0%, #FFF 10%, #FFF 90%, #EEE 100%);
-    background: linear-gradient(to bottom, #EEE 0%, #FFF 10%, #FFF 90%, #EEE 100%);
+    background: #333;
+    background: -webkit-linear-gradient(top, #2a2a2a 0%, #333 10%, #333 90%, #2a2a2a 100%);
+    background: linear-gradient(to bottom, #2a2a2a 0%, #333 10%, #333 90%, #2a2a2a 100%);
+    color: #DDD;
     background-attachment: fixed;
     height: 100%;
     width: 100%;
     z-index: -10;
 }
 
-html.dark {
-    background: #333;
-    background: -webkit-linear-gradient(top, #2a2a2a 0%, #333 10%, #333 90%, #2a2a2a 100%);
-    background: linear-gradient(to bottom, #2a2a2a 0%, #333 10%, #333 90%, #2a2a2a 100%);
-    background-attachment: fixed;
-    width: 100%;
-    height: 100%;
-    color: #DDD;
+html.light {
+    color: #333;
+    background: #FFFFFC;
+    background: -webkit-linear-gradient(top, #EEE 0%, #FFF 10%, #FFF 90%, #EEE 100%);
+    background: linear-gradient(to bottom, #EEE 0%, #FFF 10%, #FFF 90%, #EEE 100%);
 }
 
 body {
@@ -61,9 +58,8 @@ h2 {
     font-variant: small-caps;
     text-align: center;
     width: 80%;
-    margin: 0 auto 0;
     border-top: 1px solid #777;
-    margin-top: 1em;
+    margin: 1em auto 0;
     padding: 1em 0 0 0;
 }
 
@@ -207,7 +203,7 @@ footer {
     -ms-flex-align: space-around;
     align-items: space-around;
     width: 100%;
-    min-height: 400px;
+    min-height: 250px;
     padding: 2em 10px;
     text-align: center;
     margin: auto;
@@ -248,24 +244,28 @@ a.tag, a.category {
     margin: 2px 1px;
     border-radius: 4px;
     display: inline-block;
-    color: #333;
+    color: #DDD;
     border: 1px solid rgba(76, 76, 76, 0.9);
 }
 
 a.tag:hover, a.category:hover {
+    background: #ddd;
+    color: #333;
+    text-decoration: none;
+}
+
+.light a.tag, .light a.category {
+    color: #333;
+}
+
+.light a.tag:hover, .light a.category:hover {
     background: #333;
     color: #FFFFFC;
     text-decoration: none;
 }
 
-.dark a.tag, .dark a.category {
-    color: #DDD;
-}
-
-.dark a.tag:hover, .dark a.category:hover {
-    background: #DDD;
-    color: #333;
-    text-decoration: none;
+.light .light-inverted {
+    filter: invert(1);
 }
 
 .post {
@@ -349,7 +349,7 @@ a.tag:hover, a.category:hover {
 }
 
 .table-of-contents li a {
-    color: #333;
+    color: #DDD;
     font-weight: normal;
     box-sizing: border-box;
     border-top: 1px solid #444;
@@ -367,20 +367,19 @@ a.tag:hover, a.category:hover {
 }
 
 .table-of-contents li a:hover {
-    background: #333;
-    color: #FFFFFC;
+    background: #DDD;
+    color: #333;
     text-decoration: none;
     padding-left: 2em;
 }
 
-.dark .table-of-contents ul a {
-    color: #DDD;
+.light .table-of-contents li a {
+    color: #333;
 }
 
-.dark .table-of-contents ul a:hover {
-    background: #DDD;
-    color: #333;
-    padding-left: 2em;
+.light .table-of-contents li a:hover {
+    background: #333;
+    color: #FFFFFC;
 }
 
 .arrow {
@@ -402,7 +401,7 @@ a.tag:hover, a.category:hover {
     font-size: 1.5em;
     width: 1.5em;
     height: 1.5em;
-    background: #DDD;
+    background: #222;
     /*display: table-cell;*/
     /*vertical-align: middle;*/
     text-align: center;
@@ -416,20 +415,20 @@ a.tag:hover, a.category:hover {
 .arrow:hover {
     box-sizing: border-box;
     width: 2em;
-    color: #EB005B;
-    border: 1px solid #EB005B;
+    color: #C00762;
+    border: 1px solid #C00762;
     opacity: 0.9;
     background: #FFFFFC;
     text-decoration: none;
 }
 
-.dark .arrow {
-    background: #222;
+.light .arrow {
+    background: #DDD;
 }
 
-.dark .arrow:hover {
-    color: #C00762;
-    border-color: #C00762;
+.light .arrow:hover {
+    color: #EB005B;
+    border: 1px solid #EB005B;
 }
 
 .social-buttons {
@@ -462,11 +461,11 @@ a.tag:hover, a.category:hover {
 }
 
 .monochrome {
-    color: #333;
+    color: #DDD;
 }
 
-.dark .monochrome {
-    color: #DDD;
+.light .monochrome {
+    color: #333;
 }
 
 .gem-info {
@@ -485,21 +484,21 @@ a.tag:hover, a.category:hover {
 }
 
 .gem-info table {
-    border: 1px solid #333;
+    border: 1px solid #DDD;
     border-collapse: collapse;
 }
 
 .gem-info table td {
-    border: 1px solid #333;
+    border: 1px solid #DDD;
     padding: 0.4em 1em;
 }
 
-.dark .gem-info table {
-    border: 1px solid #DDD;
+.light .gem-info table {
+    border: 1px solid #333;
 }
 
-.dark .gem-info table td {
-    border: 1px solid #DDD;
+.light .gem-info table td {
+    border: 1px solid #333;
 }
 
 .pager-title {
@@ -533,13 +532,13 @@ a.tag:hover, a.category:hover {
 }
 
 #theme-button {
-    text-transform: uppercase;
-    font-family: "Quicksand", helvetica, sans-serif;
+    font-family: "Noto Sans Emoji", "Quicksand", helvetica, sans-serif;
     font-size: 1.5em;
     font-weight: bold;
     text-align: right;
     cursor: pointer;
     opacity: 0.6;
+    margin-left: 50px;
 }
 
 #theme-button:hover {

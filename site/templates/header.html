@@ -1,22 +1,29 @@
 <header>
     <nav>
         <a id="beacon" href="/">
-            <div id="home-text"> HOME </div>
+            <div id="home-text"> Home</div>
         </a>
     </nav>
 
     <div class="right-sidebar">
         {{#githubUser}}
         <a class="ext-link" href="https://github.com/{{githubUser}}">
-            <img src="/images/github-logo.svg" alt="Github Profile"/>
+            <img src="/images/github-logo.svg" alt="Github Profile" class="light-inverted"/>
         </a>
         {{/githubUser}}
 
         {{#blueskyHandle}}
         <a class="ext-link" href="https://bsky.app/profile/{{blueskyHandle}}">
-            <img src="/images/bluesky-logo.svg" alt="Bluesky Profile"/>
+            <img src="/images/bluesky-logo.svg" alt="Bluesky Profile" class="light-inverted"/>
         </a>
         {{/blueskyHandle}}
-    <div id="theme-button">DAY</div>
+        {{#mastodonHandle}}
+        <a class="ext-link" href="https://{{mastodonHandle}}">
+            <img src="/images/mastodon-logo.svg" alt="Mastodon Profile" class="light-inverted"/>
+        </a>
+        {{/mastodonHandle}}
+        <a class="ext-link" id="theme-button">
+            <img src="/images/white-sun-behind-cloud-noto-emoji-bold.svg" alt="Toggle light mode" class="light-inverted"/>
+        </a>
     </div>
 </header>

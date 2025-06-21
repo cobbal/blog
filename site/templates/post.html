@@ -6,12 +6,13 @@
     <meta name="author" content="{{author}}">
     <meta name=viewport content="width=device-width, initial-scale=1">
     {{>site/templates/meta-data.html}}
+
     <title>{{title}}</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/syntax.css">
 </head>
 <body>
-    {{>site/templates/header.html}}
+{{>site/templates/header.html}}
 
 <div id="page">
     <div class="wrapper">
@@ -34,9 +35,9 @@
             <div class="metadata">
             </div>
             <div class="tags">
-              {{#tags}}
-              <span class="tag {{.}}">{{.}}</span>
-              {{/tags}}
+                {{#tags}}
+                <span class="tag {{.}}">[{{.}}]</span>
+                {{/tags}}
             </div>
         </div>
     </div>
@@ -45,8 +46,7 @@
 
         <br>
         <br>
-</article>
-
+    </article>
 </div>
 
 {{>site/templates/footer.html}}
