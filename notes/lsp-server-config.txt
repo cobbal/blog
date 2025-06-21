@@ -1,0 +1,12 @@
+{
+  "name": "haskell-custom",
+  "programArgs": {
+    "default": "haskell-language-server-wrapper --lsp --cwd $PROJECT_DIR$"
+  },
+  "languageMappings": [
+    {
+      "language": "Haskell",
+      "languageId": "haskell"
+    }
+  ]
+}
