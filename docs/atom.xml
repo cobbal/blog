@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>blog.cobbal.com</title>
     <link href="https://blog.cobbal.com/atom.xml" rel="self" type="application/rss+xml"/>
-    <updated>2025-06-21T03:24:54Z</updated>
+    <updated>2025-06-25T01:38:18Z</updated>
     <author>
         <name>Andrew Cobb</name>
     </author>
@@ -10,8 +10,8 @@
 
     <entry>
         <title>Sample Post</title>
-        <link href="https://blog.cobbal.com/posts/0-hello/index.html"/>
-        <id>https://blog.cobbal.com/posts/0-hello/index.html</id>
+        <link href="https://blog.cobbal.com/posts/0-hello/"/>
+        <id>https://blog.cobbal.com/posts/0-hello/</id>
         <updated>2025-06-20T00:00:00Z</updated>
         <category term="slick"/>
         <category term="site"/>

@@ -21,7 +21,6 @@ import Data.Time (
   defaultTimeLocale,
   formatTime,
   getCurrentTime,
-  iso8601DateFormat,
   parseTimeOrError,
  )
 import Development.Shake (
@@ -38,7 +37,7 @@ import Development.Shake (
   writeFile',
  )
 import Development.Shake.Classes (Binary)
-import Development.Shake.FilePath (dropDirectory1, normaliseEx, toStandard, (-<.>), (</>))
+import Development.Shake.FilePath (dropDirectory1, normaliseEx, splitFileName, toStandard, (-<.>), (</>))
 import Development.Shake.Forward (cacheAction, shakeArgsForward)
 import GHC.Generics (Generic)
 import Slick (compileTemplate', convert, markdownToHTML, substitute)
@@ -139,7 +138,7 @@ buildPost srcPath = cacheAction ("build" :: T.Text, srcPath) $ do
   -- load post content and metadata as JSON blob
   postData <- markdownToHTML . T.pack $ postContent
   let postUrl = T.pack . dropDirectory1 $ srcPath -<.> "html"
-      withPostUrl = _Object . at "url" ?~ String (T.pack $ toStandard $ normaliseEx $ "/" ++ T.unpack postUrl)
+  let withPostUrl = _Object . at "url" ?~ String (makeWebPath $ "/" ++ T.unpack postUrl)
   -- Add additional metadata we've been able to compute
   let fullPostData = withSiteMeta . withPostUrl $ postData
   template <- compileTemplate' "site/templates/post.html"
@@ -163,9 +162,15 @@ rfc3339 :: Maybe String
 rfc3339 = Just "%H:%M:%SZ"
 
 toIsoDate :: UTCTime -> String
-toIsoDate = formatTime defaultTimeLocale (iso8601DateFormat rfc3339)
+toIsoDate = formatTime defaultTimeLocale "%Y-%m-%dT%H:%M:%SZ"
 
--- toIsoDate = iso8601Show
+dropIndexDotHtml :: FilePath -> FilePath
+dropIndexDotHtml path = if fileName == "index.html" then directory else path
+  where
+    (directory, fileName) = splitFileName path
+
+makeWebPath :: FilePath -> T.Text
+makeWebPath = T.pack . toStandard . normaliseEx . dropIndexDotHtml
 
 writeBinaryFile :: FilePath -> String -> IO ()
 writeBinaryFile f txt = withBinaryFile f WriteMode (\hdl -> hPutStr hdl txt)
