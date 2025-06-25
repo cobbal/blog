@@ -1,21 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <title>blog.cobbal.com</title>
-    <link href="https://blog.cobbal.com/atom.xml" rel="self" type="application/rss+xml"/>
-    <updated>2025-06-25T03:43:32Z</updated>
-    <author>
-        <name>Andrew Cobb</name>
-    </author>
-    <id>https://blog.cobbal.com/</id>
+<!DOCTYPE html>
+<html lang="en">
+<head profile="http://www.w3.org/2005/10/profile">
+    <meta charset="UTF-8">
+    <meta name="description" content="blog.cobbal.com">
+    <meta name="author" content="Andrew Cobb">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cross-platform binaries with swift, wasm, and NPM">
+    <meta name="twitter:description" content="">
+    
+    <title>Cross-platform binaries with swift, wasm, and NPM</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+<body>
+<header>
+    <nav>
+        <a id="beacon" href="/">
+            <div id="home-text"> Home</div>
+        </a>
+    </nav>
 
-    <entry>
-        <title>Cross-platform binaries with swift, wasm, and NPM</title>
-        <link href="https://blog.cobbal.com/posts/0-wasm-cli-distribution/"/>
-        <id>https://blog.cobbal.com/posts/0-wasm-cli-distribution/</id>
-        <updated>2025-06-24T00:00:00Z</updated>
-        <category term="wasm"/>
-        <category term="swift"/>
-        <content type="html"><![CDATA[<h2 id="why">Why</h2>
+    <div class="right-sidebar">
+        <a class="ext-link" href="https://github.com/cobbal/blog">
+            <img src="/images/github-logo.svg" alt="Github Source" class="light-inverted"/>
+        </a>
+        <a class="ext-link" href="https://bsky.app/profile/cobbal.bsky.social">
+            <img src="/images/bluesky-logo.svg" alt="Bluesky Profile" class="light-inverted"/>
+        </a>
+        <a class="ext-link" href="https://mstdn.social/@cobbal">
+            <img src="/images/mastodon-logo.svg" alt="Mastodon Profile" class="light-inverted"/>
+        </a>
+        <a class="ext-link" id="theme-button">
+            <img src="/images/white-sun-behind-cloud-noto-emoji-bold.svg" alt="Toggle light mode" class="light-inverted"/>
+        </a>
+    </div>
+</header>
+
+<div id="page">
+    <div class="wrapper">
+        <div class="masthead">
+            <span class="title">
+                Cross-platform binaries with swift, wasm, and NPM
+            </span>
+            <br>
+
+            <br>
+            <span class="byline">by Andrew Cobb</span>
+            <br>
+            <span class="date">Jun 24, 2025</span>
+            <br>
+            <div class="metadata">
+            </div>
+            <div class="tags">
+                <span class="tag">[wasm]</span>
+                <span class="tag">[swift]</span>
+            </div>
+        </div>
+    </div>
+    <article class="post">
+        <h2 id="why">Why</h2>
 <p>Distributing a cross-platform binary is a pain. Mostly because of
 windows. Linux isn't helping much either. And macOS isn't great.
 Dependencies and/or docker are a pain to manage.</p>
@@ -182,6 +226,24 @@ href="TODO">node's documentation</a></li>
 <a href="TODO">wasm-opt</a> and compiling in release mode</li>
 <li>Debugging support is... very limited. Debug a native binary
 instead.</li>
-</ul>]]></content>
-    </entry>
-</feed>
+</ul>
+
+        <br>
+        <br>
+    </article>
+</div>
+
+<footer>
+    <p>Written by a human without AI.</p>
+    <p>Website built using <a href="https://github.com/ChrisPenner/slick">slick</a>.</p>
+    <p>All code is licensed under <a href="https://opensource.org/license/bsd-3-clause">BSD-3-Clause</a> unless cited as
+        an external source.</p>
+    <p>All prose is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> unless cited as
+        an external source.</p>
+</footer>
+
+<link href='https://fonts.googleapis.com/css?family=Quicksand:300,400' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<script src="/js/main.js"></script>
+</body>
+</html>

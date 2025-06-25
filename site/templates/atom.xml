@@ -17,7 +17,9 @@
         {{#tags}}
         <category term="{{.}}"/>
         {{/tags}}
-        <summary>{{description}}</summary>
+        {{#description}}
+        <summary>{{.}}</summary>
+        {{/description}}
         <content type="html"><![CDATA[{{{content}}}]]></content>
     </entry>
     {{/posts}}

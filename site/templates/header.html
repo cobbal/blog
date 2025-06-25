@@ -6,12 +6,11 @@
     </nav>
 
     <div class="right-sidebar">
-        {{#githubUser}}
-        <a class="ext-link" href="https://github.com/{{githubUser}}">
-            <img src="/images/github-logo.svg" alt="Github Profile" class="light-inverted"/>
+        {{#githubSiteRepo}}
+        <a class="ext-link" href="{{githubSiteRepo}}">
+            <img src="/images/github-logo.svg" alt="Github Source" class="light-inverted"/>
         </a>
-        {{/githubUser}}
-
+        {{/githubSiteRepo}}
         {{#blueskyHandle}}
         <a class="ext-link" href="https://bsky.app/profile/{{blueskyHandle}}">
             <img src="/images/bluesky-logo.svg" alt="Bluesky Profile" class="light-inverted"/>

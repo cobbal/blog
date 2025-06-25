@@ -51,9 +51,9 @@ siteMeta =
     { siteAuthor = "Andrew Cobb"
     , baseUrl = "https://blog.cobbal.com"
     , siteTitle = "blog.cobbal.com"
+    , githubSiteRepo = Just "https://github.com/cobbal/blog"
     , blueskyHandle = Just "cobbal.bsky.social"
     , mastodonHandle = Just "mstdn.social/@cobbal"
-    , githubUser = Just "cobbal"
     }
 
 outputFolder :: FilePath
@@ -74,9 +74,9 @@ data SiteMeta
   { siteAuthor :: String
   , baseUrl :: String -- e.g. https://example.ca
   , siteTitle :: String
+  , githubSiteRepo :: Maybe String
   , blueskyHandle :: Maybe String -- Without @
   , mastodonHandle :: Maybe String -- server.com/@handle
-  , githubUser :: Maybe String
   }
   deriving (Generic, Eq, Ord, Show, ToJSON)
 
@@ -98,7 +98,7 @@ data Post
   , url :: String
   , date :: String
   , tags :: [Tag]
-  , description :: String
+  , description :: Maybe String
   , image :: Maybe String
   }
   deriving (Generic, Eq, Ord, Show, FromJSON, ToJSON, Binary)
@@ -125,7 +125,7 @@ buildIndex posts' = do
 -- | Find and build all posts
 buildPosts :: Action [Post]
 buildPosts = do
-  pPaths <- getDirectoryFiles "." ["site/posts//*.md"]
+  pPaths <- getDirectoryFiles "." ["site/posts/*/index.md"]
   forP pPaths buildPost
 
 {- | Load a post, process metadata, write it to output, then return the post object

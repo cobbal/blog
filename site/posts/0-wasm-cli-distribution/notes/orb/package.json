@@ -1,0 +1,8 @@
+{
+    "name": "wasm-orb",
+    "version": "0.0.1",
+    "description": "The Orb",
+    "files": ["orb.wasm"],
+    "bin": { "orb": "orb.mjs" },
+    "engines": { "node": ">=19" }
+}
