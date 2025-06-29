@@ -6,22 +6,22 @@
     </nav>
 
     <div class="right-sidebar">
-        {{#githubUser}}
-        <a class="ext-link" href="https://github.com/{{githubUser}}">
+        {{#githubLink}}
+        <a class="ext-link" href="{{githubLink}}">
             <img src="/images/github-logo.svg" alt="Github Profile" class="light-inverted"/>
         </a>
-        {{/githubUser}}
+        {{/githubLink}}
 
-        {{#blueskyHandle}}
-        <a class="ext-link" href="https://bsky.app/profile/{{blueskyHandle}}">
+        {{#blueskyLink}}
+        <a class="ext-link" href="{{blueskyLink}}">
             <img src="/images/bluesky-logo.svg" alt="Bluesky Profile" class="light-inverted"/>
         </a>
-        {{/blueskyHandle}}
-        {{#mastodonHandle}}
-        <a class="ext-link" href="https://{{mastodonHandle}}">
+        {{/blueskyLink}}
+        {{#mastodonLink}}
+        <a class="ext-link" href="{{mastodonLink}}">
             <img src="/images/mastodon-logo.svg" alt="Mastodon Profile" class="light-inverted"/>
         </a>
-        {{/mastodonHandle}}
+        {{/mastodonLink}}
         <a class="ext-link" id="theme-button">
             <img src="/images/white-sun-behind-cloud-noto-emoji-bold.svg" alt="Toggle light mode" class="light-inverted"/>
         </a>

@@ -51,9 +51,9 @@ siteMeta =
     { siteAuthor = "Andrew Cobb"
     , baseUrl = "https://blog.cobbal.com"
     , siteTitle = "blog.cobbal.com"
-    , blueskyHandle = Just "cobbal.bsky.social"
-    , mastodonHandle = Just "mstdn.social/@cobbal"
-    , githubUser = Just "cobbal"
+    , blueskyLink = Just "https://bsky.app/profile/cobbal.bsky.social"
+    , mastodonLink = Just "https://mstdn.social/@cobbal"
+    , githubLink = Just "https://github.com/cobbal/blog"
     }
 
 outputFolder :: FilePath
@@ -74,9 +74,9 @@ data SiteMeta
   { siteAuthor :: String
   , baseUrl :: String -- e.g. https://example.ca
   , siteTitle :: String
-  , blueskyHandle :: Maybe String -- Without @
-  , mastodonHandle :: Maybe String -- server.com/@handle
-  , githubUser :: Maybe String
+  , blueskyLink :: Maybe String
+  , mastodonLink :: Maybe String
+  , githubLink :: Maybe String
   }
   deriving (Generic, Eq, Ord, Show, ToJSON)
 
